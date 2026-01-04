@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Elden Ring Night Rain - Character Selector</title>
+    <style>
+        /* 全体の背景設定 */
+        body {
+            background-color: #0a0a0a;
+            color: #d4c3a1;
+            font-family: 'serif';
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        /* 各スロットのスタイル */
+        .slot-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        .red { background-color: #ff4444; color: #ff4444; }
+        .blue { background-color: #4444ff; color: #4444ff; }
+        .green { background-color: #44ff44; color: #44ff44; }
+
+        .slot-box {
+            width: 200px; /* ここでサイズを調整できます */
+            height: 200px;
+            border: 4px solid #444;
+            background-color: #000;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .slot-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; /* 枠に合わせて画像を収める */
+        }
+
+        /* ボタンのスタイル */
+        button {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            background-color: #222;
+            color: #d4c3a1;
+            border: 1px solid #d4c3a1;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background-color: #d4c3a1;
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="slot-wrapper">
+            <div class="indicator red"></div>
+            <div class="slot-box"><img id="img-red" src="01.png" alt="red"></div>
+        </div>
+        <div class="slot-wrapper">
+            <div class="indicator blue"></div>
+            <div class="slot-box"><img id="img-blue" src="01.png" alt="blue"></div>
+        </div>
+        <div class="slot-wrapper">
+            <div class="indicator green"></div>
+            <div class="slot-box"><img id="img-green" src="01.png" alt="green"></div>
+        </div>
+    </div>
+
+    <button id="action-btn">抽選開始</button>
+
+    <script>
+        // 1. 画像のリスト（ファイル形式に合わせて .jpg や .png に書き換えてください）
+        const images = ["01.png", "02.png", "03.png", "04.png", "05.png", "06.png", "07.png", "08.png", "09.png", "10.png"];
+        
+        let isRunning = false;
+        let timers = [];
+
+        const btn = document.getElementById('action-btn');
+        const imgElements = [
+            document.getElementById('img-red'),
+            document.getElementById('img-blue'),
+            document.getElementById('img-green')
+        ];
+
+        function startRoulette() {
+            isRunning = true;
+            btn.textContent = "ストップ！";
+            
+            // 各スロットごとにタイマーを回す
+            imgElements.forEach((img, index) => {
+                timers[index] = setInterval(() => {
+                    const randomIndex = Math.floor(Math.random() * images.length);
+                    img.src = images[randomIndex];
+                }, 80); // 0.08秒ごとに切り替え
+            });
+        }
+
+        function stopRoulette() {
+            isRunning = false;
+            btn.textContent = "抽選開始";
+            timers.forEach(t => clearInterval(t));
+        }
+
+        btn.addEventListener('click', () => {
+            if (isRunning) {
+                stopRoulette();
+            } else {
+                startRoulette();
+            }
+        });
+    </script>
+</body>
+</html>
