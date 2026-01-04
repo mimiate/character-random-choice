@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Elden Ring Night Rain - Character Selector</title>
     <style>
-        /* 背景：中央から外へ暗くなるグラデーション */
+        /* 背景設定：重厚なダークグラデーション */
         body {
             background: radial-gradient(circle, #1a1a1a 0%, #050505 100%);
             color: #d4c3a1;
@@ -20,7 +20,7 @@
 
         .container {
             display: flex;
-            gap: 30px;
+            gap: 35px;
             margin-bottom: 50px;
         }
 
@@ -30,19 +30,18 @@
             align-items: center;
         }
 
-        /* 赤・青・緑の丸：サイズを大きくし、光を強く調整 */
+        /* 上部の丸いインジケーター */
         .indicator {
             width: 45px;
             height: 45px;
             border-radius: 50%;
             margin-bottom: 15px;
         }
-
         .red { background-color: #ff4444; box-shadow: 0 0 20px #ff4444; }
         .blue { background-color: #4444ff; box-shadow: 0 0 20px #4444ff; }
         .green { background-color: #44ff44; box-shadow: 0 0 20px #44ff44; }
 
-        /* キャラクター枠：金色の二重線で高級感を出す */
+        /* キャラクター枠（金の二重線 ＋ 外側に広がる光のエフェクト） */
         .slot-box {
             width: 220px; 
             height: 220px;
@@ -52,7 +51,22 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            position: relative;
+            transition: box-shadow 0.5s ease; /* 光の切り替わりを滑らかに */
+        }
+
+        /* 各枠の「外光」設定：街灯のようにじわっと広がる光 */
+        /* 赤コーナー */
+        .slot-wrapper:nth-child(1) .slot-box {
+            box-shadow: 0 0 40px rgba(255, 68, 68, 0.4);
+        }
+        /* 青コーナー */
+        .slot-wrapper:nth-child(2) .slot-box {
+            box-shadow: 0 0 40px rgba(68, 68, 255, 0.4);
+        }
+        /* 緑コーナー */
+        .slot-wrapper:nth-child(3) .slot-box {
+            box-shadow: 0 0 40px rgba(68, 255, 68, 0.4);
         }
 
         .slot-box img {
@@ -61,16 +75,15 @@
             object-fit: cover;
         }
 
-        /* ボタンのコンテナ：エフェクトの基準点にする */
+        /* ボタンのデザイン */
         .btn-container {
             position: relative;
             display: inline-block;
         }
 
-        /* メインのボタン */
         button {
             position: relative;
-            z-index: 2; /* エフェクトより上に表示 */
+            z-index: 2;
             padding: 15px 60px;
             font-size: 1.4rem;
             background-color: #111;
@@ -82,39 +95,25 @@
             outline: none;
         }
 
-        button:active {
-            transform: scale(0.95); /* 押した瞬間に少し沈む */
-        }
+        button:active { transform: scale(0.95); }
 
-        /* 鼓動（波紋）エフェクトの本体 */
+        /* 鼓動エフェクト（ボタン押下時） */
         .pulse {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            top: 0; left: 0; right: 0; bottom: 0;
             border: 2px solid #c5a059;
             opacity: 0;
             z-index: 1;
-            pointer-events: none; /* クリックを邪魔しない */
+            pointer-events: none;
         }
 
-        /* JavaScriptでこのクラスを付け外ししてアニメーションさせる */
         .animate-pulse {
             animation: pulse-animation 0.6s ease-out;
         }
 
         @keyframes pulse-animation {
-            0% {
-                transform: scale(1);
-                opacity: 0.8;
-                border-width: 4px;
-            }
-            100% {
-                transform: scale(1.5, 1.8); /* 横と縦に大きく広がる */
-                opacity: 0;
-                border-width: 1px;
-            }
+            0% { transform: scale(1); opacity: 0.8; border-width: 4px; }
+            100% { transform: scale(1.5, 1.8); opacity: 0; border-width: 1px; }
         }
     </style>
 </head>
@@ -141,7 +140,9 @@
     </div>
 
     <script>
+        // 画像リスト（ファイル名に合わせて変更してください）
         const images = ["01.png", "02.png", "03.png", "04.png", "05.png", "06.png", "07.png", "08.png", "09.png", "10.png"];
+        
         let isRunning = false;
         let timers = [];
 
@@ -154,16 +155,15 @@
         ];
 
         function triggerPulse() {
-            // アニメーションクラスを一度消して、再度つける（連続クリック対応）
             pulse.classList.remove('animate-pulse');
-            void pulse.offsetWidth; // おまじない：再描画を強制
+            void pulse.offsetWidth; 
             pulse.classList.add('animate-pulse');
         }
 
         function startRoulette() {
             isRunning = true;
             btn.textContent = "ストップ";
-            triggerPulse(); // 押し始めにドクン！
+            triggerPulse();
             
             imgElements.forEach((img, index) => {
                 timers[index] = setInterval(() => {
@@ -176,7 +176,7 @@
         function stopRoulette() {
             isRunning = false;
             btn.textContent = "抽選開始";
-            triggerPulse(); // 止めた時にもドクン！
+            triggerPulse();
             timers.forEach(t => clearInterval(t));
         }
 
