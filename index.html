@@ -39,7 +39,7 @@
             background-color: #000;
             position: relative;
             /* 外側の金枠 */
-            border: 5px solid #c5a059;
+            border: 2px solid #c5a059;
             box-sizing: border-box;
             display: flex;
             justify-content: center;
@@ -50,7 +50,7 @@
         .color-border {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
-            border-width: 8px; /* 色の帯の太さ */
+            border-width: 5px; /* 色の帯の太さ */
             border-style: solid;
             pointer-events: none;
             z-index: 2;
@@ -65,8 +65,8 @@
         .slot-box::after {
             content: "";
             position: absolute;
-            top: 8px; left: 8px; right: 8px; bottom: 8px;
-            border:  8p solid #c5a059;
+            top: 2px; left: 2px; right: 2px; bottom: 2px;
+            border:  2p solid #c5a059;
             z-index: 3;
             pointer-events: none;
         }
