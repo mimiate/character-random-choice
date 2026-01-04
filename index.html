@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Elden Ring Night Rain - Character Selector</title>
     <style>
-        /* 背景設定：重厚なダークグラデーション */
         body {
             background: radial-gradient(circle, #1a1a1a 0%, #050505 100%);
             color: #d4c3a1;
@@ -13,9 +12,18 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            min-height: 100vh;
             margin: 0;
             overflow: hidden;
+        }
+
+        /* ロゴ画像の設定 */
+        .logo {
+            width: 90%;
+            max-width: 730px; /* 両端のスロットに届くくらいのサイズ */
+            height: auto;
+            margin-bottom: 40px;
+            filter: drop-shadow(0 0 15px rgba(197, 160, 89, 0.3));
         }
 
         .container {
@@ -24,66 +32,56 @@
             margin-bottom: 50px;
         }
 
-        .slot-wrapper {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* 上部の丸いインジケーター */
-        .indicator {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            margin-bottom: 15px;
-        }
-        .red { background-color: #ff4444; box-shadow: 0 0 20px #ff4444; }
-        .blue { background-color: #4444ff; box-shadow: 0 0 20px #4444ff; }
-        .green { background-color: #44ff44; box-shadow: 0 0 20px #44ff44; }
-
-        /* キャラクター枠（金の二重線 ＋ 外側に広がる光のエフェクト） */
+        /* 額縁スロットの基本構造 */
         .slot-box {
             width: 220px; 
             height: 220px;
-            border: 4px double #c5a059;
             background-color: #000;
-            overflow: hidden;
+            position: relative;
+            /* 外側の金枠 */
+            border: 2px solid #c5a059;
+            box-sizing: border-box;
             display: flex;
             justify-content: center;
             align-items: center;
-            position: relative;
-            transition: box-shadow 0.5s ease; /* 光の切り替わりを滑らかに */
         }
 
-        /* 各枠の「外光」設定：街灯のようにじわっと広がる光 */
-        /* 赤コーナー */
-        .slot-wrapper:nth-child(1) .slot-box {
-            box-shadow: 0 0 40px rgba(255, 68, 68, 0.4);
+        /* 各色の帯（額縁の内側） */
+        .color-border {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            border-width: 8px; /* 色の帯の太さ */
+            border-style: solid;
+            pointer-events: none;
+            z-index: 2;
         }
-        /* 青コーナー */
-        .slot-wrapper:nth-child(2) .slot-box {
-            box-shadow: 0 0 40px rgba(68, 68, 255, 0.4);
-        }
-        /* 緑コーナー */
-        .slot-wrapper:nth-child(3) .slot-box {
-            box-shadow: 0 0 40px rgba(68, 255, 68, 0.4);
+
+        /* 各コーナーの色と外光を「濃いめ」に設定 */
+        .red-slot { border-color: #ff0000; box-shadow: 0 0 50px rgba(255, 0, 0, 0.5); }
+        .blue-slot { border-color: #0044ff; box-shadow: 0 0 50px rgba(0, 68, 255, 0.5); }
+        .green-slot { border-color: #00ff00; box-shadow: 0 0 50px rgba(0, 255, 0, 0.5); }
+
+        /* 内側の金枠（擬似要素で作成） */
+        .slot-box::after {
+            content: "";
+            position: absolute;
+            top: 8px; left: 8px; right: 8px; bottom: 8px;
+            border: 1px solid #c5a059;
+            z-index: 3;
+            pointer-events: none;
         }
 
         .slot-box img {
             width: 100%;
             height: 100%;
             object-fit: cover;
-        }
-
-        /* ボタンのデザイン */
-        .btn-container {
+            /* 色帯の下に画像を配置 */
             position: relative;
-            display: inline-block;
+            z-index: 1;
         }
 
+        /* ボタン周り */
         button {
-            position: relative;
-            z-index: 2;
             padding: 15px 60px;
             font-size: 1.4rem;
             background-color: #111;
@@ -92,45 +90,41 @@
             cursor: pointer;
             letter-spacing: 6px;
             transition: all 0.3s ease;
-            outline: none;
         }
 
         button:active { transform: scale(0.95); }
 
-        /* 鼓動エフェクト（ボタン押下時） */
+        .btn-container { position: relative; }
         .pulse {
             position: absolute;
             top: 0; left: 0; right: 0; bottom: 0;
             border: 2px solid #c5a059;
             opacity: 0;
-            z-index: 1;
             pointer-events: none;
         }
-
-        .animate-pulse {
-            animation: pulse-animation 0.6s ease-out;
-        }
-
+        .animate-pulse { animation: pulse-animation 0.6s ease-out; }
         @keyframes pulse-animation {
-            0% { transform: scale(1); opacity: 0.8; border-width: 4px; }
-            100% { transform: scale(1.5, 1.8); opacity: 0; border-width: 1px; }
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.5, 1.8); opacity: 0; }
         }
     </style>
 </head>
 <body>
 
+    <img src="logo.png" alt="Logo" class="logo">
+
     <div class="container">
-        <div class="slot-wrapper">
-            <div class="indicator red"></div>
-            <div class="slot-box"><img id="img-red" src="01.png"></div>
+        <div class="slot-box">
+            <div class="color-border red-slot"></div>
+            <img id="img-red" src="01.png">
         </div>
-        <div class="slot-wrapper">
-            <div class="indicator blue"></div>
-            <div class="slot-box"><img id="img-blue" src="01.png"></div>
+        <div class="slot-box">
+            <div class="color-border blue-slot"></div>
+            <img id="img-blue" src="01.png">
         </div>
-        <div class="slot-wrapper">
-            <div class="indicator green"></div>
-            <div class="slot-box"><img id="img-green" src="01.png"></div>
+        <div class="slot-box">
+            <div class="color-border green-slot"></div>
+            <img id="img-green" src="01.png">
         </div>
     </div>
 
@@ -140,12 +134,9 @@
     </div>
 
     <script>
-        // 画像リスト（ファイル名に合わせて変更してください）
         const images = ["01.png", "02.png", "03.png", "04.png", "05.png", "06.png", "07.png", "08.png", "09.png", "10.png"];
-        
         let isRunning = false;
         let timers = [];
-
         const btn = document.getElementById('action-btn');
         const pulse = document.getElementById('pulse-effect');
         const imgElements = [
@@ -160,31 +151,21 @@
             pulse.classList.add('animate-pulse');
         }
 
-        function startRoulette() {
-            isRunning = true;
-            btn.textContent = "ストップ";
-            triggerPulse();
-            
-            imgElements.forEach((img, index) => {
-                timers[index] = setInterval(() => {
-                    const randomIndex = Math.floor(Math.random() * images.length);
-                    img.src = images[randomIndex];
-                }, 70); 
-            });
-        }
-
-        function stopRoulette() {
-            isRunning = false;
-            btn.textContent = "抽選開始";
-            triggerPulse();
-            timers.forEach(t => clearInterval(t));
-        }
-
         btn.addEventListener('click', () => {
             if (isRunning) {
-                stopRoulette();
+                isRunning = false;
+                btn.textContent = "抽選開始";
+                triggerPulse();
+                timers.forEach(t => clearInterval(t));
             } else {
-                startRoulette();
+                isRunning = true;
+                btn.textContent = "ストップ";
+                triggerPulse();
+                imgElements.forEach((img, index) => {
+                    timers[index] = setInterval(() => {
+                        img.src = images[Math.floor(Math.random() * images.length)];
+                    }, 70); 
+                });
             }
         });
     </script>
