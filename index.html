@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>Elden Ring Night Rain - Character Selector</title>
     <style>
-        /* 背景：中央から外へ暗くなるグラデーション */
+        /* 背景設定 */
         body {
             background: radial-gradient(circle, #1a1a1a 0%, #050505 100%);
             color: #d4c3a1;
@@ -30,19 +30,18 @@
             align-items: center;
         }
 
-        /* 赤・青・緑の丸：サイズを大きくし、光を強く調整 */
+        /* 赤・青・緑の丸 */
         .indicator {
-            width: 60px;
-            height: 60px;
+            width: 45px;
+            height: 45px;
             border-radius: 50%;
             margin-bottom: 15px;
         }
-
         .red { background-color: #ff4444; box-shadow: 0 0 20px #ff4444; }
         .blue { background-color: #4444ff; box-shadow: 0 0 20px #4444ff; }
         .green { background-color: #44ff44; box-shadow: 0 0 20px #44ff44; }
 
-        /* キャラクター枠：金色の二重線で高級感を出す */
+        /* キャラクター枠（金の二重線） */
         .slot-box {
             width: 220px; 
             height: 220px;
@@ -53,140 +52,22 @@
             justify-content: center;
             align-items: center;
             box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            position: relative; /* 内側の色線の基準 */
         }
 
-        .slot-box img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        /* ボタンのコンテナ：エフェクトの基準点にする */
-        .btn-container {
-            position: relative;
-            display: inline-block;
-        }
-
-        /* メインのボタン */
-        button {
-            position: relative;
-            z-index: 2; /* エフェクトより上に表示 */
-            padding: 15px 60px;
-            font-size: 1.4rem;
-            background-color: #111;
-            color: #c5a059;
-            border: 1px solid #c5a059;
-            cursor: pointer;
-            letter-spacing: 6px;
-            transition: all 0.3s ease;
-            outline: none;
-        }
-
-        button:active {
-            transform: scale(0.95); /* 押した瞬間に少し沈む */
-        }
-
-        /* 鼓動（波紋）エフェクトの本体 */
-        .pulse {
+        /* 【追加】金枠の内側に色線を出す設定 */
+        .slot-box::after {
+            content: "";
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            border: 2px solid #c5a059;
-            opacity: 0;
-            z-index: 1;
-            pointer-events: none; /* クリックを邪魔しない */
+            top: 2px;
+            left: 2px;
+            right: 2px;
+            bottom: 2px;
+            border: 2px solid transparent; 
+            pointer-events: none;
+            z-index: 3;
         }
 
-        /* JavaScriptでこのクラスを付け外ししてアニメーションさせる */
-        .animate-pulse {
-            animation: pulse-animation 0.6s ease-out;
-        }
-
-        @keyframes pulse-animation {
-            0% {
-                transform: scale(1);
-                opacity: 0.8;
-                border-width: 4px;
-            }
-            100% {
-                transform: scale(1.5, 1.8); /* 横と縦に大きく広がる */
-                opacity: 0;
-                border-width: 1px;
-            }
-        }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        <div class="slot-wrapper">
-            <div class="indicator red"></div>
-            <div class="slot-box"><img id="img-red" src="01.png"></div>
-        </div>
-        <div class="slot-wrapper">
-            <div class="indicator blue"></div>
-            <div class="slot-box"><img id="img-blue" src="01.png"></div>
-        </div>
-        <div class="slot-wrapper">
-            <div class="indicator green"></div>
-            <div class="slot-box"><img id="img-green" src="01.png"></div>
-        </div>
-    </div>
-
-    <div class="btn-container">
-        <div id="pulse-effect" class="pulse"></div>
-        <button id="action-btn">抽選開始</button>
-    </div>
-
-    <script>
-        const images = ["01.png", "02.png", "03.png", "04.png", "05.png", "06.png", "07.png", "08.png", "09.png", "10.png"];
-        let isRunning = false;
-        let timers = [];
-
-        const btn = document.getElementById('action-btn');
-        const pulse = document.getElementById('pulse-effect');
-        const imgElements = [
-            document.getElementById('img-red'),
-            document.getElementById('img-blue'),
-            document.getElementById('img-green')
-        ];
-
-        function triggerPulse() {
-            // アニメーションクラスを一度消して、再度つける（連続クリック対応）
-            pulse.classList.remove('animate-pulse');
-            void pulse.offsetWidth; // おまじない：再描画を強制
-            pulse.classList.add('animate-pulse');
-        }
-
-        function startRoulette() {
-            isRunning = true;
-            btn.textContent = "ストップ";
-            triggerPulse(); // 押し始めにドクン！
-            
-            imgElements.forEach((img, index) => {
-                timers[index] = setInterval(() => {
-                    const randomIndex = Math.floor(Math.random() * images.length);
-                    img.src = images[randomIndex];
-                }, 70); 
-            });
-        }
-
-        function stopRoulette() {
-            isRunning = false;
-            btn.textContent = "抽選開始";
-            triggerPulse(); // 止めた時にもドクン！
-            timers.forEach(t => clearInterval(t));
-        }
-
-        btn.addEventListener('click', () => {
-            if (isRunning) {
-                stopRoulette();
-            } else {
-                startRoulette();
-            }
-        });
-    </script>
-</body>
-</html>
+        /* 各スロットの内側の色指定 */
+        .slot-wrapper:nth-child(1) .slot-box::after { border-color: #ff4444; opacity: 0.6; }
+        .slot-wrapper:nth-child(2) .slot-box::after { border-color: #444
